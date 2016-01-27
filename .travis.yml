@@ -1,0 +1,11 @@
+---
+sudo: required
+services:
+  - docker
+language: ruby
+rvm: 2.3.0
+before_install:
+  - gem install bundler
+script: bundle exec rake test
+after_success:
+  - "curl -H \"Content-Type: application/json\" --data '{\"build\": true}' -X POST https://registry.hub.docker.com/u/flyinprogrammer/ujexhibitor/trigger/12ee3b10-7d8e-4f4a-81b8-9b6dac778307/"
