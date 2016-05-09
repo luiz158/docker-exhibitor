@@ -1,0 +1,34 @@
+{
+  "consul": "{{.CONSUL_IP}}:8500",
+  "logging": {
+    "level": "INFO",
+    "format": "default",
+    "output": "stdout"
+  },
+  "services": [
+    {
+      "name": "zookeeper",
+      "port": 2181,
+      "health": [
+        "/usr/bin/curl",
+        "--fail",
+        "-s",
+        "http://localhost:8181/exhibitor/v1/cluster/state"
+      ],
+      "poll": 10,
+      "ttl": 30
+    },
+    {
+      "name": "exhibitor",
+      "port": 8181,
+      "health": [
+        "/usr/bin/curl",
+        "--fail",
+        "-s",
+        "http://localhost:8181/exhibitor/v1/cluster/state"
+      ],
+      "poll": 10,
+      "ttl": 30
+    }
+  ]
+}

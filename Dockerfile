@@ -1,4 +1,4 @@
-FROM flyinprogrammer/ujava
+FROM java:8-jdk
 MAINTAINER Alan Schegrer <flyinprogrammer@gmail.com>
 
 ENV ZK_VERSION=3.4.6 \
@@ -32,11 +32,25 @@ RUN apt-get update && \
            $HOME/.gradle \
            $HOME/.m2
 
-ADD wrapper.sh /opt/exhibitor/wrapper.sh
-ADD zk.log4j.properties /opt/zk/conf/log4j.properties
+ENV CP_VERSION=2.1.0 \
+    CP_SHA1=0b073e857683bb7ea7cb662b4cc0cdb7c1b48cde
+
+RUN set -x && \
+    curl -fSL "https://github.com/joyent/containerpilot/releases/download/${CP_VERSION}/containerpilot-${CP_VERSION}.tar.gz" -o cp.tar.gz && \
+    tar -xzvf cp.tar.gz && \
+    echo "${CP_SHA1}  ./containerpilot" | sha1sum -c - && \
+    mv ./containerpilot /bin/ && \
+    chmod +x /bin/containerpilot && \
+    rm cp.tar.gz && \
+    containerpilot -version
+
+COPY wrapper.sh /opt/exhibitor/wrapper.sh
+COPY zk.log4j.properties /opt/zk/conf/log4j.properties
+COPY app.json /opt/exhibitor/app.json
+ENV CONTAINERPILOT=file:///opt/exhibitor/app.json
 
 USER root
 WORKDIR /opt/exhibitor
 EXPOSE 2181 2888 3888 8181
 
-CMD ["bash", "-e", "/opt/exhibitor/wrapper.sh"]
+CMD ["containerpilot", "/opt/exhibitor/wrapper.sh"]
