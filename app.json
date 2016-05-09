@@ -15,6 +15,7 @@
         "-s",
         "http://localhost:8181/exhibitor/v1/cluster/state"
       ],
+      "tags": ["{{.DC}}"],
       "poll": 10,
       "ttl": 30
     },
@@ -27,6 +28,7 @@
         "-s",
         "http://localhost:8181/exhibitor/v1/cluster/state"
       ],
+      "tags": ["{{.DC}}"],
       "poll": 10,
       "ttl": 30
     }
